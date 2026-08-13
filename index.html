@@ -151,6 +151,16 @@
   }
   .buy-btn:hover{background:var(--orange);color:#fff;}
   .empty-msg{color:var(--ink-soft);font-size:14px;padding:40px 0;text-align:center;}
+  .loading-msg{
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;
+    padding:60px 0;color:var(--ink-soft2);font-size:14px;font-weight:600;text-align:center;
+  }
+  .spinner{
+    width:34px;height:34px;border-radius:50%;
+    border:3.5px solid var(--orange-light);border-top-color:var(--orange);
+    animation:spin 0.8s linear infinite;
+  }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
 
   footer{
     text-align:center;padding:26px 24px 34px;color:var(--ink-soft);font-size:12.5px;
@@ -261,6 +271,10 @@
 
 <main>
   <h2 class="section-title" id="sectionTitle">Semua Produk</h2>
+  <div class="loading-msg" id="loadingMsg">
+    <div class="spinner"></div>
+    <div>Mohon bersabar, sedang menampilkan produk...</div>
+  </div>
   <div class="grid" id="productGrid"></div>
   <div class="empty-msg" id="emptyMsg" style="display:none;">Belum ada produk di kategori ini.</div>
 </main>
@@ -527,7 +541,7 @@ const SEED_PRODUCTS = [
   {id:"p12",name:"Selimut Bayi Bulu Halus",price:89000,category:"Perlengkapan Tidur",emoji:"🌙"}
 ];
 
-let products = [];
+let products = null; // null = belum selesai dimuat, [] = sudah dimuat tapi kosong
 let activeCategory = "Semua";
 let searchTerm = "";
 
@@ -624,8 +638,17 @@ function renderCatNav(){
 function renderGrid(){
   const grid = document.getElementById('productGrid');
   const emptyMsg = document.getElementById('emptyMsg');
+  const loadingMsg = document.getElementById('loadingMsg');
   const title = document.getElementById('sectionTitle');
   const isSearching = searchTerm.trim() !== "";
+
+  if(products === null){
+    loadingMsg.style.display = 'flex';
+    grid.innerHTML = "";
+    emptyMsg.style.display = 'none';
+    return;
+  }
+  loadingMsg.style.display = 'none';
 
   let list;
   if(isSearching){
