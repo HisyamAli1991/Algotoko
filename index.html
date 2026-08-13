@@ -8,126 +8,147 @@
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root{
-    --cream:#FAF6EE;
-    --beige:#F1E8D8;
+    --orange:#EE4D2D;
+    --orange-dark:#D8431F;
+    --orange-light:#FFF0EA;
+    --gold:#FFCE3D;
+    --bg:#F5F5F5;
     --card:#FFFFFF;
-    --sage:#8CA889;
-    --sage-dark:#6F8A6C;
-    --sage-light:#DCE7DA;
-    --coral:#EF8354;
-    --coral-dark:#D96B3B;
-    --ink:#3A382F;
-    --ink-soft:#7C7666;
-    --line:#E8E0CE;
+    --ink:#222222;
+    --ink-soft:#888888;
+    --ink-soft2:#757575;
+    --line:#EFEFEF;
+    --green:#26AA99;
   }
   *{box-sizing:border-box;}
-  body{margin:0;font-family:'Nunito',sans-serif;background:var(--cream);color:var(--ink);}
+  body{margin:0;font-family:'Nunito',sans-serif;background:var(--bg);color:var(--ink);}
   h1,h2,h3,.brand,.nav-btn,.cat-title{font-family:'Fredoka',sans-serif;}
 
   /* HEADER */
   header{
-    background:var(--cream);
-    border-bottom:1px solid var(--line);
+    background:linear-gradient(135deg,var(--orange) 0%,#F4703A 100%);
     position:sticky;top:0;z-index:40;
+    box-shadow:0 2px 8px rgba(238,77,45,0.25);
   }
   .header-inner{
-    max-width:1180px;margin:0 auto;padding:16px 24px;
+    max-width:1180px;margin:0 auto;padding:14px 24px 16px;
     display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
   }
   .brand{display:flex;align-items:center;gap:10px;}
   .brand-mark{
-    width:42px;height:42px;border-radius:12px;background:var(--sage);
-    display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px;
-    flex-shrink:0;
+    width:40px;height:40px;border-radius:10px;background:#fff;
+    display:flex;align-items:center;justify-content:center;color:var(--orange);font-size:19px;
+    flex-shrink:0;overflow:hidden;
   }
-  .brand-name{font-size:22px;font-weight:700;color:var(--ink);}
-  .brand-tag{font-size:11px;color:var(--ink-soft);font-family:'Nunito';letter-spacing:.04em;text-transform:uppercase;}
-  .search-wrap{flex:1 1 100%;order:3;margin-top:2px;}
+  .brand-name{font-size:21px;font-weight:700;color:#fff;line-height:1.1;}
+  .brand-tag{font-size:10.5px;color:rgba(255,255,255,0.85);font-family:'Nunito';letter-spacing:.03em;}
+  .search-wrap{flex:1 1 100%;order:3;margin-top:2px;position:relative;}
+  .search-wrap::before{
+    content:"🔍";position:absolute;left:14px;top:50%;transform:translateY(-50%);
+    font-size:13px;opacity:.55;pointer-events:none;
+  }
   .search-wrap input{
-    width:100%;padding:10px 16px;border-radius:999px;border:1.5px solid var(--line);
-    background:var(--card);font-family:'Nunito';font-size:14px;outline:none;
+    width:100%;padding:10px 16px 10px 38px;border-radius:4px;border:none;
+    background:#fff;font-family:'Nunito';font-size:14px;outline:none;
   }
-  .search-wrap input:focus{border-color:var(--sage);}
-  @media(min-width:720px){.search-wrap{flex:1 1 auto;max-width:420px;order:0;margin-top:0;}}
+  .search-wrap input:focus{box-shadow:0 0 0 2px rgba(255,255,255,0.5);}
+  @media(min-width:720px){.search-wrap{flex:1 1 auto;max-width:460px;order:0;margin-top:0;}}
   .admin-toggle{
-    border:1.5px solid var(--sage);background:transparent;color:var(--sage-dark);
-    padding:9px 16px;border-radius:999px;font-family:'Nunito';font-weight:700;font-size:13px;
+    border:1.5px solid rgba(255,255,255,0.75);background:transparent;color:#fff;
+    padding:8px 16px;border-radius:4px;font-family:'Nunito';font-weight:700;font-size:13px;
     cursor:pointer;white-space:nowrap;
   }
-  .admin-toggle:hover{background:var(--sage-light);}
+  .admin-toggle:hover{background:rgba(255,255,255,0.15);}
 
   /* CATEGORY NAV */
-  .cat-nav{background:var(--cream);}
+  .cat-nav{background:var(--card);border-bottom:1px solid var(--line);}
   .cat-nav-inner{
-    max-width:1180px;margin:0 auto;padding:14px 24px 18px;
-    display:flex;gap:10px;overflow-x:auto;
+    max-width:1180px;margin:0 auto;padding:12px 24px;
+    display:flex;gap:8px;overflow-x:auto;
   }
   .cat-btn{
-    flex-shrink:0;padding:10px 18px;border-radius:999px;border:none;
-    background:var(--sage-light);color:var(--sage-dark);font-family:'Nunito';font-weight:700;
-    font-size:13.5px;cursor:pointer;transition:.15s;
+    flex-shrink:0;padding:9px 16px;border-radius:4px;border:1px solid var(--line);
+    background:#fff;color:var(--ink-soft2);font-family:'Nunito';font-weight:700;
+    font-size:13px;cursor:pointer;transition:.15s;
   }
-  .cat-btn:hover{background:var(--sage);color:#fff;}
-  .cat-btn.active{background:var(--sage);color:#fff;}
+  .cat-btn:hover{border-color:var(--orange);color:var(--orange);}
+  .cat-btn.active{background:var(--orange-light);color:var(--orange);border-color:var(--orange);}
 
   /* HERO */
-  .hero{max-width:1180px;margin:0 auto;padding:8px 24px 32px;}
+  .hero{max-width:1180px;margin:0 auto;padding:16px 24px 0;}
   .hero-box{
-    background:var(--beige);border-radius:20px;padding:34px 32px;
+    background:linear-gradient(120deg,var(--orange) 0%,#FB6B3E 55%,var(--gold) 130%);
+    border-radius:8px;padding:30px 32px;
     display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;
+    box-shadow:0 6px 18px rgba(238,77,45,0.18);
   }
-  .hero-box h1{margin:0 0 8px;font-size:26px;color:var(--ink);}
-  .hero-box p{margin:0;color:var(--ink-soft);font-size:14.5px;max-width:440px;}
-  .hero-emoji{font-size:52px;}
+  .hero-box h1{margin:0 0 6px;font-size:24px;color:#fff;}
+  .hero-box p{margin:0;color:rgba(255,255,255,0.92);font-size:14px;max-width:440px;}
+  .hero-emoji{font-size:48px;}
 
-  /* PROMO */
-  .promo-section{max-width:1180px;margin:0 auto;padding:0 24px 8px;}
-  .promo-header{display:flex;align-items:center;gap:8px;margin:6px 0 16px;}
+  /* PROMO / FLASH SALE */
+  .promo-section{max-width:1180px;margin:0 auto;padding:20px 24px 8px;}
+  .promo-header{
+    display:flex;align-items:center;gap:10px;margin:0 0 14px;
+    background:linear-gradient(90deg,var(--orange),#FF7A45);
+    padding:10px 16px;border-radius:8px 8px 0 0;
+  }
   .promo-header .flame{font-size:19px;}
-  .promo-header h2{margin:0;font-size:19px;color:var(--ink);}
-  .promo-scroll{display:flex;gap:16px;overflow-x:auto;padding-bottom:6px;}
+  .promo-header h2{margin:0;font-size:17px;color:#fff;letter-spacing:.02em;}
+  .promo-header .timer-chip{
+    margin-left:auto;background:rgba(0,0,0,0.18);color:#fff;font-size:11.5px;font-weight:700;
+    padding:4px 10px;border-radius:4px;font-family:'Nunito';
+  }
+  .promo-scroll{display:flex;gap:14px;overflow-x:auto;padding-bottom:6px;margin-top:-14px;}
   .promo-card{
-    flex:0 0 200px;background:var(--card);border-radius:16px;overflow:hidden;
-    border:2px solid var(--coral);position:relative;display:flex;flex-direction:column;
+    flex:0 0 190px;background:var(--card);border-radius:6px;overflow:hidden;
+    border:1px solid var(--line);position:relative;display:flex;flex-direction:column;
   }
   .promo-badge{
-    position:absolute;top:10px;left:10px;background:var(--coral);color:#fff;
-    font-size:10.5px;font-weight:800;padding:4px 9px;border-radius:999px;letter-spacing:.03em;z-index:2;
+    position:absolute;top:8px;left:8px;background:var(--orange);color:#fff;
+    font-size:10px;font-weight:800;padding:3px 8px;border-radius:3px;letter-spacing:.03em;z-index:2;
   }
   .promo-card .card-img{height:120px;}
-  .promo-card .card-body{padding:12px 14px 14px;}
+  .promo-card .card-body{padding:10px 12px 12px;}
 
   /* MAIN */
-  main{max-width:1180px;margin:0 auto;padding:0 24px 60px;}
-  .section-title{font-size:19px;margin:6px 0 18px;color:var(--ink);}
+  main{max-width:1180px;margin:0 auto;padding:20px 24px 60px;}
+  .section-title{
+    font-size:15px;margin:0 0 14px;color:var(--ink-soft2);font-weight:700;
+    text-transform:uppercase;letter-spacing:.05em;
+    border-bottom:2px solid var(--orange);display:inline-block;padding-bottom:6px;
+  }
   .grid{
-    display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:20px;
+    display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px;
   }
   .card{
-    background:var(--card);border-radius:16px;overflow:hidden;border:1px solid var(--line);
+    background:var(--card);border-radius:4px;overflow:hidden;border:1px solid var(--line);
     display:flex;flex-direction:column;transition:transform .15s, box-shadow .15s;
   }
-  .card:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(60,55,40,0.08);}
+  .card:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(0,0,0,0.08);}
   .card-img{
-    height:140px;background:var(--sage-light);display:flex;align-items:center;justify-content:center;
-    font-size:52px;overflow:hidden;
+    aspect-ratio:1/1;height:auto;background:#FAFAFA;display:flex;align-items:center;justify-content:center;
+    font-size:48px;overflow:hidden;
   }
   .card-img img{width:100%;height:100%;object-fit:cover;}
-  .card-body{padding:14px 16px 16px;display:flex;flex-direction:column;gap:6px;flex:1;}
-  .card-cat{font-size:10.5px;font-weight:700;color:var(--sage-dark);text-transform:uppercase;letter-spacing:.05em;}
-  .card-name{font-size:15px;font-weight:800;color:var(--ink);line-height:1.3;min-height:38px;}
-  .card-price{font-size:16px;font-weight:800;color:var(--ink);margin-top:2px;}
-  .buy-btn{
-    margin-top:8px;border:none;background:var(--coral);color:#fff;padding:10px 0;
-    border-radius:10px;font-family:'Nunito';font-weight:800;font-size:13.5px;cursor:pointer;
-    transition:background .15s;
+  .card-body{padding:10px 12px 12px;display:flex;flex-direction:column;gap:5px;flex:1;}
+  .card-cat{font-size:10px;font-weight:700;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.04em;}
+  .card-name{
+    font-size:13.5px;font-weight:600;color:var(--ink);line-height:1.35;min-height:36px;
+    font-family:'Nunito';display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
   }
-  .buy-btn:hover{background:var(--coral-dark);}
+  .card-price{font-size:16px;font-weight:800;color:var(--orange);margin-top:2px;}
+  .buy-btn{
+    margin-top:6px;border:1.5px solid var(--orange);background:#fff;color:var(--orange);padding:8px 0;
+    border-radius:4px;font-family:'Nunito';font-weight:800;font-size:12.5px;cursor:pointer;
+    transition:background .15s,color .15s;
+  }
+  .buy-btn:hover{background:var(--orange);color:#fff;}
   .empty-msg{color:var(--ink-soft);font-size:14px;padding:40px 0;text-align:center;}
 
   footer{
     text-align:center;padding:26px 24px 34px;color:var(--ink-soft);font-size:12.5px;
-    border-top:1px solid var(--line);
+    border-top:1px solid var(--line);background:var(--card);
   }
 
   /* ADMIN OVERLAY */
@@ -152,24 +173,24 @@
     width:100%;padding:10px 12px;border-radius:10px;border:1.5px solid var(--line);
     font-family:'Nunito';font-size:14px;outline:none;background:#fff;
   }
-  .field input:focus,.field select:focus{border-color:var(--sage);}
+  .field input:focus,.field select:focus{border-color:var(--orange);}
   .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
   .primary-btn{
-    border:none;background:var(--sage);color:#fff;padding:11px 20px;border-radius:10px;
+    border:none;background:var(--orange);color:#fff;padding:11px 20px;border-radius:10px;
     font-family:'Nunito';font-weight:800;font-size:14px;cursor:pointer;width:100%;
   }
-  .primary-btn:hover{background:var(--sage-dark);}
+  .primary-btn:hover{background:var(--orange-dark);}
   .admin-list{margin-top:24px;border-top:1px solid var(--line);padding-top:18px;}
   .admin-row{
     display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line);
   }
   .admin-row .emoji{font-size:26px;width:36px;text-align:center;}
   .thumb-wrap{position:relative;width:40px;height:40px;flex-shrink:0;}
-  .thumb-wrap .emoji{width:40px;height:40px;font-size:24px;display:flex;align-items:center;justify-content:center;background:var(--sage-light);border-radius:8px;}
+  .thumb-wrap .emoji{width:40px;height:40px;font-size:24px;display:flex;align-items:center;justify-content:center;background:var(--orange-light);border-radius:8px;}
   .thumb-wrap img{width:40px;height:40px;object-fit:cover;border-radius:8px;display:block;}
   .thumb-wrap .photo-btn{
     position:absolute;bottom:-5px;right:-5px;width:18px;height:18px;border-radius:50%;
-    background:var(--sage);color:#fff;border:none;font-size:9px;cursor:pointer;
+    background:var(--orange);color:#fff;border:none;font-size:9px;cursor:pointer;
     display:flex;align-items:center;justify-content:center;padding:0;
   }
   .thumb-wrap input[type=file]{display:none;}
@@ -178,7 +199,7 @@
     display:flex;align-items:center;gap:14px;flex-wrap:wrap;
   }
   .logo-preview{
-    width:52px;height:52px;border-radius:12px;background:var(--sage);color:#fff;
+    width:52px;height:52px;border-radius:12px;background:var(--orange);color:#fff;
     display:flex;align-items:center;justify-content:center;font-size:22px;overflow:hidden;flex-shrink:0;
   }
   .logo-preview img{width:100%;height:100%;object-fit:cover;}
@@ -191,13 +212,13 @@
   .icon-btn{
     border:none;background:transparent;cursor:pointer;font-size:15px;padding:6px;border-radius:8px;
   }
-  .icon-btn.save{color:var(--sage-dark);}
-  .icon-btn.del{color:var(--coral-dark);}
+  .icon-btn.save{color:var(--orange-dark);}
+  .icon-btn.del{color:var(--orange-dark);}
   .icon-btn.star{color:var(--ink-soft);}
-  .icon-btn.star.active{color:var(--coral-dark);}
+  .icon-btn.star.active{color:var(--orange-dark);}
   .icon-btn:hover{background:var(--beige);}
   .login-box .field{margin-bottom:16px;}
-  .status-msg{font-size:12.5px;margin-top:10px;text-align:center;color:var(--sage-dark);min-height:16px;}
+  .status-msg{font-size:12.5px;margin-top:10px;text-align:center;color:var(--orange-dark);min-height:16px;}
 </style>
 </head>
 <body>
@@ -232,7 +253,7 @@
 </section>
 
 <section class="promo-section" id="promoSection" style="display:none;">
-  <div class="promo-header"><span class="flame">🔥</span><h2>Sedang Promo</h2></div>
+  <div class="promo-header"><span class="flame">⚡</span><h2>Promo Spesial</h2><span class="timer-chip">Stok terbatas</span></div>
   <div class="promo-scroll" id="promoScroll"></div>
 </section>
 
@@ -322,6 +343,10 @@ const LOGO_KEY = "algotoko-logo";
 const ADMIN_PASSWORD = "algotoko123";
 const WHATSAPP_NUMBER = "62816255599"; // nomor WA toko Algotoko
 
+// Tempel URL Web App Apps Script kamu di sini (lihat AppsScript-Code.gs).
+// Kosongkan ("") jika belum mau pakai Google Sheets — website akan pakai penyimpanan bawaan.
+const SHEET_API_URL = "";
+
 function resizeImageFile(file, maxSize, quality){
   return new Promise((resolve, reject)=>{
     const reader = new FileReader();
@@ -335,6 +360,50 @@ function resizeImageFile(file, maxSize, quality){
         canvas.width = w; canvas.height = h;
         canvas.getContext('2d').drawImage(img, 0, 0, w, h);
         resolve(canvas.toDataURL('image/jpeg', quality));
+      };
+      img.onerror = reject;
+      img.src = e.target.result;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+// Kompresi foto produk: crop jadi persegi (pas untuk kartu produk) lalu kecilkan bertahap
+// sampai di bawah target ukuran, biar hemat penyimpanan dan cepat dimuat.
+function compressProductPhoto(file, {square = true, maxDim = 480, targetBytes = 150 * 1024} = {}){
+  return new Promise((resolve, reject)=>{
+    const reader = new FileReader();
+    reader.onload = (e)=>{
+      const img = new Image();
+      img.onload = ()=>{
+        let sx = 0, sy = 0, sw = img.width, sh = img.height;
+        if(square){
+          const side = Math.min(img.width, img.height);
+          sx = Math.round((img.width - side) / 2);
+          sy = Math.round((img.height - side) / 2);
+          sw = side; sh = side;
+        }
+        const outSide = square ? Math.min(maxDim, sw) : maxDim;
+        let outW = square ? outSide : Math.min(maxDim, sw);
+        let outH = square ? outSide : Math.min(maxDim, sh);
+        if(!square){
+          if(sw > sh){ outH = Math.round(sh * (outW / sw)); }
+          else{ outW = Math.round(sw * (outH / sh)); }
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = outW; canvas.height = outH;
+        canvas.getContext('2d').drawImage(img, sx, sy, sw, sh, 0, 0, outW, outH);
+
+        // Turunkan kualitas bertahap sampai di bawah target ukuran (batas minimal 0.35)
+        let quality = 0.8;
+        let dataUrl = canvas.toDataURL('image/jpeg', quality);
+        const approxBytes = (b64)=> Math.round((b64.length - b64.indexOf(',') - 1) * 0.75);
+        while(approxBytes(dataUrl) > targetBytes && quality > 0.35){
+          quality -= 0.1;
+          dataUrl = canvas.toDataURL('image/jpeg', quality);
+        }
+        resolve(dataUrl);
       };
       img.onerror = reject;
       img.src = e.target.result;
@@ -396,7 +465,36 @@ let products = [];
 let activeCategory = "Semua";
 let searchTerm = "";
 
+const USE_SHEET = !!SHEET_API_URL;
+const IMAGE_KEY = (id) => `algotoko-image-${id}`;
+
+// Ambil foto produk (disimpan terpisah dari Sheets karena batas ukuran sel).
+async function attachImages(list){
+  await Promise.all(list.map(async (p)=>{
+    try{
+      const res = await window.storage.get(IMAGE_KEY(p.id), true);
+      p.image = res && res.value ? res.value : null;
+    }catch(e){
+      p.image = null;
+    }
+  }));
+  return list;
+}
+
 async function loadProducts(){
+  if(USE_SHEET){
+    try{
+      const res = await fetch(SHEET_API_URL);
+      const data = await res.json();
+      products = Array.isArray(data) ? await attachImages(data) : [];
+    }catch(e){
+      console.error("Gagal memuat produk dari Google Sheets", e);
+      products = [];
+    }
+    renderAll();
+    return;
+  }
+  // Mode tanpa Sheets: pakai penyimpanan bawaan (window.storage)
   try{
     const res = await window.storage.get(STORAGE_KEY, true);
     products = res && res.value ? JSON.parse(res.value) : null;
@@ -410,12 +508,18 @@ async function loadProducts(){
   renderAll();
 }
 
+// Dipakai di mode tanpa Sheets, dan sebagai fallback penyimpanan foto di kedua mode.
 async function saveProducts(){
+  if(USE_SHEET) return; // di mode Sheets, tiap aksi admin langsung mengirim ke API (lihat sheetAdd/Update/Delete)
   try{
     await window.storage.set(STORAGE_KEY, JSON.stringify(products), true);
   }catch(e){
     console.error("Gagal menyimpan produk", e);
   }
+}
+
+async function sheetPost(payload){
+  await fetch(SHEET_API_URL, { method: 'POST', body: JSON.stringify(payload) });
 }
 
 function formatRupiah(n){
@@ -568,18 +672,20 @@ function renderAdminList(){
     photoInput.onchange = async ()=>{
       const file = photoInput.files[0];
       if(!file) return;
-      const dataUrl = await resizeImageFile(file, 480, 0.72);
+      const dataUrl = await compressProductPhoto(file);
       const prod = products.find(x=>x.id === p.id);
       prod.image = dataUrl;
+      await window.storage.set(IMAGE_KEY(p.id), dataUrl, true);
       await saveProducts();
       renderAdminList();
       renderGrid();
       renderPromo();
-      showAdminMsg("Foto produk diperbarui.");
+      showAdminMsg(`Foto produk diperbarui (${Math.round(dataUrl.length*0.75/1024)} KB).`);
     };
     row.querySelector('.star').onclick = async ()=>{
       const prod = products.find(x=>x.id === p.id);
       prod.featured = !prod.featured;
+      if(USE_SHEET){ await sheetPost({action:'update', id: prod.id, fields:{featured: prod.featured ? 'TRUE':'FALSE'}}); }
       await saveProducts();
       renderAdminList();
       renderPromo();
@@ -589,6 +695,7 @@ function renderAdminList(){
       const prod = products.find(x=>x.id === p.id);
       prod.name = nameIn.value.trim() || prod.name;
       prod.price = Number(priceIn.value) || prod.price;
+      if(USE_SHEET){ await sheetPost({action:'update', id: prod.id, fields:{name: prod.name, price: prod.price}}); }
       await saveProducts();
       renderGrid();
       showAdminMsg("Perubahan disimpan.");
@@ -596,6 +703,7 @@ function renderAdminList(){
     row.querySelector('.del').onclick = async ()=>{
       if(confirm(`Hapus produk "${p.name}"?`)){
         products = products.filter(x=>x.id !== p.id);
+        if(USE_SHEET){ await sheetPost({action:'delete', id: p.id}); }
         await saveProducts();
         renderAdminList();
         renderGrid();
@@ -628,11 +736,16 @@ async function addProduct(){
 
   let image = null;
   if(fileInput.files && fileInput.files[0]){
-    image = await resizeImageFile(fileInput.files[0], 480, 0.72);
+    image = await compressProductPhoto(fileInput.files[0]);
   }
 
   const id = "p" + Date.now();
-  products.push({id, name, price, category, emoji, featured:false, image});
+  const newProd = {id, name, price, category, emoji, featured:false, image};
+  products.push(newProd);
+  if(USE_SHEET){
+    await sheetPost({action:'add', product:{id, name, price, category, emoji, featured:false}});
+    if(image) await window.storage.set(IMAGE_KEY(id), image, true);
+  }
   await saveProducts();
   document.getElementById('newName').value = "";
   document.getElementById('newPrice').value = "";
