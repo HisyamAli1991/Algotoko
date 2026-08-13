@@ -345,12 +345,12 @@ const WHATSAPP_NUMBER = "62816255599"; // nomor WA toko Algotoko
 
 // Tempel URL Web App Apps Script kamu di sini (lihat AppsScript-Code.gs) jika mau admin panel
 // di website bisa MENULIS balik ke spreadsheet. Kosongkan ("") jika tidak perlu.
-const SHEET_API_URL = "";
+const SHEET_API_URL = "https://script.google.com/macros/s/AKfycbwCcmu0574jDiKuaEP-PzJ-tdSrYTR_Z2cZK7wEBrUDBZG86KIiDtCEXTv7QD5BoLZgLg/exec";
 
 // Link "Publish to web" (format CSV) dari Google Sheets, untuk MEMBACA data produk.
 // Sheet > File > Share > Publish to web > pilih sheet "Products" > format CSV > Publish.
 // Kosongkan ("") jika belum mau pakai Google Sheets.
-const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTk5kSSZ6Xaqnjxr6tzJpJrhcGF-tzNdSIiIIg9qh7se93-s6GCdkEI-F4HfW3ANGaoxtFq68tqM5Eg/pub?output=csv";
+const SHEET_CSV_URL = ""; // dinonaktifkan — sekarang pakai SHEET_API_URL (Apps Script)
 
 // Parser CSV sederhana yang menangani tanda kutip (misal: "43,000")
 function parseCSV(text){
