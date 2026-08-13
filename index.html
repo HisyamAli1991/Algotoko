@@ -390,6 +390,27 @@ function csvToProducts(text){
     });
 }
 
+// Deteksi lingkungan: window.storage cuma tersedia di preview/artifact Claude.
+const hasArtifactStorage = (typeof window.storage !== 'undefined' && window.storage !== null);
+
+// Upload gambar ke tempat yang tepat sesuai lingkungan, kembalikan URL/dataURL yang siap dipakai.
+// mode hasil: 'artifact' (window.storage), 'drive' (via Apps Script ke Google Drive), 'local' (fallback browser saja).
+async function persistImage(dataUrl, filename){
+  if(hasArtifactStorage){
+    return { mode: 'artifact', src: dataUrl };
+  }
+  if(USE_SHEET_API){
+    const res = await fetch(SHEET_API_URL, {
+      method: 'POST',
+      body: JSON.stringify({ action: 'uploadImage', dataUrl, filename })
+    });
+    const json = await res.json();
+    if(json && json.ok && json.url) return { mode: 'drive', src: json.url };
+    throw new Error((json && json.error) || 'Upload ke Google Drive gagal.');
+  }
+  return { mode: 'local', src: dataUrl };
+}
+
 function resizeImageFile(file, maxSize, quality){
   return new Promise((resolve, reject)=>{
     const reader = new FileReader();
@@ -513,14 +534,16 @@ const USE_SHEET_CSV = !USE_SHEET_API && !!SHEET_CSV_URL;
 const USE_SHEET = USE_SHEET_API || USE_SHEET_CSV;
 const IMAGE_KEY = (id) => `algotoko-image-${id}`;
 
-// Ambil foto produk (disimpan terpisah dari Sheets karena batas ukuran sel).
+// Ambil foto produk. Di mode Sheets+Drive, URL foto sudah ikut terbawa dari kolom "image" di sheet,
+// jadi ini hanya perlu jalan untuk mode preview Claude (window.storage).
 async function attachImages(list){
+  if(!hasArtifactStorage) return list;
   await Promise.all(list.map(async (p)=>{
     try{
       const res = await window.storage.get(IMAGE_KEY(p.id), true);
-      p.image = res && res.value ? res.value : null;
+      p.image = res && res.value ? res.value : (p.image || null);
     }catch(e){
-      p.image = null;
+      p.image = p.image || null;
     }
   }));
   return list;
@@ -745,18 +768,27 @@ function renderAdminList(){
         return;
       }
       try{
-        const dataUrl = await compressProductPhoto(file);
+        const compressed = await compressProductPhoto(file);
         const prod = products.find(x=>x.id === p.id);
-        prod.image = dataUrl;
-        await window.storage.set(IMAGE_KEY(p.id), dataUrl, true);
+        const result = await persistImage(compressed, `product-${p.id}-${Date.now()}.jpg`);
+        prod.image = result.src;
+        if(result.mode === 'artifact'){
+          await window.storage.set(IMAGE_KEY(p.id), result.src, true);
+        }else if(result.mode === 'drive'){
+          await sheetPost({ action:'update', id: p.id, fields:{ image: result.src } });
+        }else if(result.mode === 'local'){
+          try{ localStorage.setItem(IMAGE_KEY(p.id), result.src); }catch(err){}
+        }
         await saveProducts();
         renderAdminList();
         renderGrid();
         renderPromo();
-        showAdminMsg(`Foto produk diperbarui (${Math.round(dataUrl.length*0.75/1024)} KB).`);
+        showAdminMsg(result.mode === 'local'
+          ? "Foto tersimpan sementara di browser ini saja — sambungkan SHEET_API_URL (Apps Script) agar foto permanen dan terlihat semua pengunjung."
+          : `Foto produk diperbarui${result.mode==='drive' ? ' (tersimpan di Google Drive)' : ''}.`);
       }catch(e){
         console.error("Upload foto produk gagal:", e);
-        showAdminMsg("Gagal memproses foto ini. Coba pakai format JPG atau PNG (foto iPhone format HEIC kadang tidak didukung browser).");
+        showAdminMsg("Gagal mengunggah foto. Pastikan Apps Script (SHEET_API_URL) sudah di-deploy dengan benar, lalu coba lagi.");
       }
     };
     row.querySelector('.star').onclick = async ()=>{
@@ -812,21 +844,27 @@ async function addProduct(){
   }
 
   let image = null;
+  const id = "p" + Date.now();
   if(fileInput.files && fileInput.files[0]){
     try{
-      image = await compressProductPhoto(fileInput.files[0]);
+      const compressed = await compressProductPhoto(fileInput.files[0]);
+      const result = await persistImage(compressed, `product-${id}-${Date.now()}.jpg`);
+      image = result.src;
+      if(result.mode === 'artifact'){
+        await window.storage.set(IMAGE_KEY(id), image, true);
+      }else if(result.mode === 'local'){
+        try{ localStorage.setItem(IMAGE_KEY(id), image); }catch(err){}
+      }
     }catch(e){
-      console.error("Gagal memproses foto produk baru:", e);
-      showAdminMsg("Foto gagal diproses (coba format JPG/PNG), tapi produk tetap bisa disimpan tanpa foto.");
+      console.error("Gagal mengunggah foto produk baru:", e);
+      showAdminMsg("Foto gagal diunggah, tapi produk tetap bisa disimpan tanpa foto.");
     }
   }
 
-  const id = "p" + Date.now();
   const newProd = {id, name, price, category, emoji, featured:false, image};
   products.push(newProd);
-  if(USE_SHEET){
-    await sheetPost({action:'add', product:{id, name, price, category, emoji, featured:false}});
-    if(image) await window.storage.set(IMAGE_KEY(id), image, true);
+  if(USE_SHEET_API){
+    await sheetPost({action:'add', product:{id, name, price, category, emoji, featured:false, image: image || ''}});
   }
   await saveProducts();
   document.getElementById('newName').value = "";
@@ -840,16 +878,30 @@ async function addProduct(){
 }
 
 async function loadLogo(){
-  try{
-    const res = await window.storage.get(LOGO_KEY, true);
-    if(res && res.value){
-      document.getElementById('brandMark').innerHTML = `<img src="${res.value}" alt="Logo Algotoko" style="width:100%;height:100%;object-fit:cover;border-radius:12px;">`;
-      const preview = document.getElementById('logoPreview');
-      if(preview) preview.innerHTML = `<img src="${res.value}" alt="">`;
-    }
-  }catch(e){
-    // belum ada logo tersimpan, pakai default emoji
+  function applyLogo(src){
+    document.getElementById('brandMark').innerHTML = `<img src="${src}" alt="Logo Algotoko" style="width:100%;height:100%;object-fit:cover;border-radius:12px;">`;
+    const preview = document.getElementById('logoPreview');
+    if(preview) preview.innerHTML = `<img src="${src}" alt="">`;
   }
+  if(hasArtifactStorage){
+    try{
+      const res = await window.storage.get(LOGO_KEY, true);
+      if(res && res.value) applyLogo(res.value);
+    }catch(e){ /* belum ada logo tersimpan, pakai default emoji */ }
+    return;
+  }
+  if(USE_SHEET_API){
+    try{
+      const res = await fetch(SHEET_API_URL + '?resource=config');
+      const config = await res.json();
+      if(config && config.logo) applyLogo(config.logo);
+    }catch(e){ /* belum ada logo tersimpan, pakai default emoji */ }
+    return;
+  }
+  try{
+    const local = localStorage.getItem(LOGO_KEY);
+    if(local) applyLogo(local);
+  }catch(e){ /* belum ada logo tersimpan, pakai default emoji */ }
 }
 
 async function uploadLogo(){
@@ -864,15 +916,24 @@ async function uploadLogo(){
     return;
   }
   try{
-    const dataUrl = await resizeImageFile(file, 200, 0.8);
-    await window.storage.set(LOGO_KEY, dataUrl, true);
-    document.getElementById('brandMark').innerHTML = `<img src="${dataUrl}" alt="Logo Algotoko" style="width:100%;height:100%;object-fit:cover;border-radius:12px;">`;
-    document.getElementById('logoPreview').innerHTML = `<img src="${dataUrl}" alt="">`;
+    const compressed = await resizeImageFile(file, 200, 0.8);
+    const result = await persistImage(compressed, `logo-${Date.now()}.jpg`);
+    document.getElementById('brandMark').innerHTML = `<img src="${result.src}" alt="Logo Algotoko" style="width:100%;height:100%;object-fit:cover;border-radius:12px;">`;
+    document.getElementById('logoPreview').innerHTML = `<img src="${result.src}" alt="">`;
     fileInput.value = "";
-    showAdminMsg("Logo toko berhasil diperbarui.");
+    if(result.mode === 'artifact'){
+      await window.storage.set(LOGO_KEY, result.src, true);
+      showAdminMsg("Logo toko berhasil diperbarui.");
+    }else if(result.mode === 'drive'){
+      await sheetPost({ action:'setConfig', key:'logo', value: result.src });
+      showAdminMsg("Logo toko berhasil diperbarui (tersimpan di Google Drive).");
+    }else{
+      try{ localStorage.setItem(LOGO_KEY, result.src); }catch(err){}
+      showAdminMsg("Logo tersimpan sementara di browser ini saja — sambungkan SHEET_API_URL (Apps Script) agar logo permanen dan terlihat semua pengunjung.");
+    }
   }catch(e){
     console.error("Upload logo gagal:", e);
-    showAdminMsg("Gagal memproses foto ini. Coba pakai format JPG atau PNG (foto iPhone format HEIC kadang tidak didukung browser).");
+    showAdminMsg("Gagal mengunggah logo. Pastikan Apps Script (SHEET_API_URL) sudah di-deploy dengan benar, lalu coba lagi.");
   }
 }
 
