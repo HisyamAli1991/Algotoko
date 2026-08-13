@@ -285,7 +285,7 @@
   <div class="panel" style="max-width:720px;">
     <button class="close-x" onclick="closeOverlay('adminOverlay')">✕</button>
     <h2>Kelola Produk</h2>
-    <p class="sub">Tambah produk baru, atau ubah nama &amp; harga produk yang ada.</p>
+    <p class="sub" id="adminSub">Tambah produk baru, atau ubah nama &amp; harga produk yang ada.</p>
 
     <div class="row2">
       <div class="field">
@@ -343,9 +343,52 @@ const LOGO_KEY = "algotoko-logo";
 const ADMIN_PASSWORD = "algotoko123";
 const WHATSAPP_NUMBER = "62816255599"; // nomor WA toko Algotoko
 
-// Tempel URL Web App Apps Script kamu di sini (lihat AppsScript-Code.gs).
-// Kosongkan ("") jika belum mau pakai Google Sheets — website akan pakai penyimpanan bawaan.
+// Tempel URL Web App Apps Script kamu di sini (lihat AppsScript-Code.gs) jika mau admin panel
+// di website bisa MENULIS balik ke spreadsheet. Kosongkan ("") jika tidak perlu.
 const SHEET_API_URL = "";
+
+// Link "Publish to web" (format CSV) dari Google Sheets, untuk MEMBACA data produk.
+// Sheet > File > Share > Publish to web > pilih sheet "Products" > format CSV > Publish.
+// Kosongkan ("") jika belum mau pakai Google Sheets.
+const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTk5kSSZ6Xaqnjxr6tzJpJrhcGF-tzNdSIiIIg9qh7se93-s6GCdkEI-F4HfW3ANGaoxtFq68tqM5Eg/pub?output=csv";
+
+// Parser CSV sederhana yang menangani tanda kutip (misal: "43,000")
+function parseCSV(text){
+  const rows = [];
+  let row = [], field = "", inQuotes = false;
+  for(let i = 0; i < text.length; i++){
+    const c = text[i], next = text[i+1];
+    if(inQuotes){
+      if(c === '"' && next === '"'){ field += '"'; i++; }
+      else if(c === '"'){ inQuotes = false; }
+      else{ field += c; }
+    }else{
+      if(c === '"'){ inQuotes = true; }
+      else if(c === ','){ row.push(field); field = ""; }
+      else if(c === '\n'){ row.push(field); rows.push(row); row = []; field = ""; }
+      else if(c === '\r'){ /* skip */ }
+      else{ field += c; }
+    }
+  }
+  if(field.length || row.length){ row.push(field); rows.push(row); }
+  return rows.filter(r => r.length > 1 || (r.length === 1 && r[0] !== ""));
+}
+
+function csvToProducts(text){
+  const rows = parseCSV(text);
+  if(rows.length < 2) return [];
+  const headers = rows[0].map(h => h.trim());
+  return rows.slice(1)
+    .filter(r => r[0] && r[0].trim() !== "")
+    .map(r => {
+      const obj = {};
+      headers.forEach((h, i) => { obj[h] = (r[i] || "").trim(); });
+      obj.id = String(obj.id);
+      obj.price = Number(String(obj.price).replace(/[^0-9.-]/g, "")) || 0;
+      obj.featured = String(obj.featured).toUpperCase() === "TRUE";
+      return obj;
+    });
+}
 
 function resizeImageFile(file, maxSize, quality){
   return new Promise((resolve, reject)=>{
@@ -465,7 +508,9 @@ let products = [];
 let activeCategory = "Semua";
 let searchTerm = "";
 
-const USE_SHEET = !!SHEET_API_URL;
+const USE_SHEET_API = !!SHEET_API_URL;
+const USE_SHEET_CSV = !USE_SHEET_API && !!SHEET_CSV_URL;
+const USE_SHEET = USE_SHEET_API || USE_SHEET_CSV;
 const IMAGE_KEY = (id) => `algotoko-image-${id}`;
 
 // Ambil foto produk (disimpan terpisah dari Sheets karena batas ukuran sel).
@@ -482,13 +527,25 @@ async function attachImages(list){
 }
 
 async function loadProducts(){
-  if(USE_SHEET){
+  if(USE_SHEET_API){
     try{
       const res = await fetch(SHEET_API_URL);
       const data = await res.json();
       products = Array.isArray(data) ? await attachImages(data) : [];
     }catch(e){
-      console.error("Gagal memuat produk dari Google Sheets", e);
+      console.error("Gagal memuat produk dari Google Sheets (Apps Script)", e);
+      products = [];
+    }
+    renderAll();
+    return;
+  }
+  if(USE_SHEET_CSV){
+    try{
+      const res = await fetch(SHEET_CSV_URL);
+      const text = await res.text();
+      products = await attachImages(csvToProducts(text));
+    }catch(e){
+      console.error("Gagal memuat produk dari Google Sheets (CSV publish)", e);
       products = [];
     }
     renderAll();
@@ -519,6 +576,7 @@ async function saveProducts(){
 }
 
 async function sheetPost(payload){
+  if(!USE_SHEET_API) return; // link CSV publish-to-web tidak bisa menerima tulisan balik
   await fetch(SHEET_API_URL, { method: 'POST', body: JSON.stringify(payload) });
 }
 
@@ -643,6 +701,16 @@ function openAdminPanel(){
   document.getElementById('newPrice').value = "";
   document.getElementById('newEmoji').value = "";
   document.getElementById('adminMsg').textContent = "";
+  const sub = document.getElementById('adminSub');
+  if(sub){
+    if(USE_SHEET_API){
+      sub.textContent = "Terhubung ke Google Sheets (baca & tulis). Perubahan di sini otomatis masuk ke spreadsheet.";
+    }else if(USE_SHEET_CSV){
+      sub.textContent = "Terhubung ke Google Sheets (baca saja, via link publish). Perubahan di sini HANYA tampil sementara di layar ini — edit harga/nama langsung di spreadsheet lalu muat ulang halaman agar tersimpan.";
+    }else{
+      sub.textContent = "Tambah produk baru, atau ubah nama & harga produk yang ada.";
+    }
+  }
   renderAdminList();
   document.getElementById('adminOverlay').classList.add('show');
 }
