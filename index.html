@@ -740,15 +740,24 @@ function renderAdminList(){
     photoInput.onchange = async ()=>{
       const file = photoInput.files[0];
       if(!file) return;
-      const dataUrl = await compressProductPhoto(file);
-      const prod = products.find(x=>x.id === p.id);
-      prod.image = dataUrl;
-      await window.storage.set(IMAGE_KEY(p.id), dataUrl, true);
-      await saveProducts();
-      renderAdminList();
-      renderGrid();
-      renderPromo();
-      showAdminMsg(`Foto produk diperbarui (${Math.round(dataUrl.length*0.75/1024)} KB).`);
+      if(!file.type.startsWith('image/')){
+        showAdminMsg("File harus berupa foto/gambar (JPG, PNG, atau WEBP).");
+        return;
+      }
+      try{
+        const dataUrl = await compressProductPhoto(file);
+        const prod = products.find(x=>x.id === p.id);
+        prod.image = dataUrl;
+        await window.storage.set(IMAGE_KEY(p.id), dataUrl, true);
+        await saveProducts();
+        renderAdminList();
+        renderGrid();
+        renderPromo();
+        showAdminMsg(`Foto produk diperbarui (${Math.round(dataUrl.length*0.75/1024)} KB).`);
+      }catch(e){
+        console.error("Upload foto produk gagal:", e);
+        showAdminMsg("Gagal memproses foto ini. Coba pakai format JPG atau PNG (foto iPhone format HEIC kadang tidak didukung browser).");
+      }
     };
     row.querySelector('.star').onclick = async ()=>{
       const prod = products.find(x=>x.id === p.id);
@@ -804,7 +813,12 @@ async function addProduct(){
 
   let image = null;
   if(fileInput.files && fileInput.files[0]){
-    image = await compressProductPhoto(fileInput.files[0]);
+    try{
+      image = await compressProductPhoto(fileInput.files[0]);
+    }catch(e){
+      console.error("Gagal memproses foto produk baru:", e);
+      showAdminMsg("Foto gagal diproses (coba format JPG/PNG), tapi produk tetap bisa disimpan tanpa foto.");
+    }
   }
 
   const id = "p" + Date.now();
@@ -844,15 +858,21 @@ async function uploadLogo(){
     showAdminMsg("Pilih file logo terlebih dahulu.");
     return;
   }
-  const dataUrl = await resizeImageFile(fileInput.files[0], 200, 0.8);
+  const file = fileInput.files[0];
+  if(!file.type.startsWith('image/')){
+    showAdminMsg("File harus berupa foto/gambar (JPG, PNG, atau WEBP).");
+    return;
+  }
   try{
+    const dataUrl = await resizeImageFile(file, 200, 0.8);
     await window.storage.set(LOGO_KEY, dataUrl, true);
     document.getElementById('brandMark').innerHTML = `<img src="${dataUrl}" alt="Logo Algotoko" style="width:100%;height:100%;object-fit:cover;border-radius:12px;">`;
     document.getElementById('logoPreview').innerHTML = `<img src="${dataUrl}" alt="">`;
     fileInput.value = "";
     showAdminMsg("Logo toko berhasil diperbarui.");
   }catch(e){
-    showAdminMsg("Gagal menyimpan logo, coba lagi.");
+    console.error("Upload logo gagal:", e);
+    showAdminMsg("Gagal memproses foto ini. Coba pakai format JPG atau PNG (foto iPhone format HEIC kadang tidak didukung browser).");
   }
 }
 
