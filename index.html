@@ -595,7 +595,7 @@
     <button class="sheet-item" onclick="closeOverlay('gearMenuOverlay'); openAdmin();">
       <span class="ic">⚙</span> Admin
     </button>
-    <button class="sheet-item" onclick="window.location.href='https://wa.me/6285799479288'; closeOverlay('gearMenuOverlay');">
+    <button class="sheet-item" onclick="window.open('https://wa.me/6285799479288','_blank'); closeOverlay('gearMenuOverlay');">
       <span class="ic">💬</span> Info Layanan (Hubungi CS)
     </button>
     <button class="sheet-item" onclick="aktifkanNotifikasi(); closeOverlay('gearMenuOverlay');">
@@ -955,7 +955,7 @@ function renderGrid(){
         <div class="card-name">${p.name}</div>
         <div class="card-price">${formatRupiah(p.price)}</div>
         <div class="card-actions">
-          <button class="buy-btn" onclick="window.location.href='https://wa.me/${WHATSAPP_NUMBER}?text=${waText}'">Beli Sekarang</button>
+          <button class="buy-btn" onclick="window.open('https://wa.me/${WHATSAPP_NUMBER}?text=${waText}','_blank')">Beli Sekarang</button>
           <button class="cart-add-btn" title="Tambah ke keranjang" onclick="addToCart('${p.id}',1)">🛒</button>
         </div>
       </div>
@@ -986,7 +986,7 @@ function renderPromo(){
         <div class="card-name">${p.name}</div>
         <div class="card-price">${formatRupiah(p.price)}</div>
         <div class="card-actions">
-          <button class="buy-btn" onclick="window.location.href='https://wa.me/${WHATSAPP_NUMBER}?text=${waText}'">Beli Sekarang</button>
+          <button class="buy-btn" onclick="window.open('https://wa.me/${WHATSAPP_NUMBER}?text=${waText}','_blank')">Beli Sekarang</button>
           <button class="cart-add-btn" title="Tambah ke keranjang" onclick="addToCart('${p.id}',1)">🛒</button>
         </div>
       </div>
@@ -1141,7 +1141,7 @@ function checkoutWhatsApp(){
     return line;
   }).join('\n');
   const text = `Halo Algotoko, saya mau pesan:\n\n${lines}\n\nTotal: ${formatRupiah(total)}`;
-  window.location.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
+  window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`, '_blank');
 }
 
 // Preview gambar produk (klik gambar di kartu)
