@@ -45,7 +45,12 @@
 
   /* HEADER */
   header{
-    background:linear-gradient(135deg,var(--orange) 0%,#F4703A 100%);
+    background-image:
+      linear-gradient(rgba(238,77,45,0.4),rgba(238,77,45,0.4)),
+      url("batik-pattern.jpg");
+    background-repeat:no-repeat,no-repeat;
+    background-size:cover,cover;
+    background-position:center,center;
     position:sticky;top:0;z-index:40;
     box-shadow:0 2px 8px rgba(238,77,45,0.25);
   }
@@ -59,8 +64,12 @@
     display:flex;align-items:center;justify-content:center;color:var(--orange);font-size:19px;
     flex-shrink:0;overflow:hidden;
   }
-  .brand-name{font-size:21px;font-weight:700;color:#fff;line-height:1.1;}
-  .brand-tag{font-size:10.5px;color:rgba(255,255,255,0.85);font-family:'Nunito';letter-spacing:.03em;}
+  .brand-name{
+    font-size:19px;font-weight:700;color:var(--orange-dark);line-height:1.2;
+    background:#fff;display:inline-block;padding:3px 12px;border-radius:10px;
+    box-shadow:0 2px 6px rgba(0,0,0,0.12);
+  }
+  .brand-tag{font-size:10.5px;color:rgba(255,255,255,0.95);font-family:'Nunito';letter-spacing:.03em;margin-top:3px;text-shadow:0 1px 2px rgba(0,0,0,0.25);}
   .search-wrap{flex:1 1 100%;order:3;margin-top:2px;position:relative;}
   .search-wrap::before{
     content:"🔍";position:absolute;left:14px;top:50%;transform:translateY(-50%);
@@ -74,8 +83,8 @@
   @media(min-width:720px){.search-wrap{flex:1 1 auto;max-width:460px;order:0;margin-top:0;}}
   .admin-toggle{
     border:1.5px solid rgba(255,255,255,0.75);background:transparent;color:#fff;
-    padding:8px 16px;border-radius:4px;font-family:'Nunito';font-weight:700;font-size:13px;
-    cursor:pointer;white-space:nowrap;
+    width:38px;height:38px;padding:0;border-radius:999px;font-size:17px;
+    cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;
   }
   .admin-toggle:hover{background:rgba(255,255,255,0.15);}
 
@@ -105,7 +114,12 @@
   .promo-section{max-width:1180px;margin:0 auto;padding:20px 24px 8px;}
   .promo-header{
     display:flex;align-items:center;gap:10px;margin:0 0 14px;
-    background:linear-gradient(90deg,var(--orange),#FF7A45);
+    background-image:
+      linear-gradient(rgba(238,77,45,0.45),rgba(238,77,45,0.45)),
+      url("batik-pattern.jpg");
+    background-repeat:no-repeat,no-repeat;
+    background-size:cover,cover;
+    background-position:center,center;
     padding:10px 16px;border-radius:8px 8px 0 0;
   }
   .promo-header .flame{font-size:19px;}
@@ -329,6 +343,48 @@
     z-index:200;opacity:0;pointer-events:none;transition:opacity .25s, transform .25s;box-shadow:0 6px 16px rgba(0,0,0,0.25);
   }
   .toast.show{opacity:1;transform:translateX(-50%) translateY(-6px);}
+
+  /* INSTALL APP BANNER */
+  .install-banner{
+    position:fixed;left:12px;right:12px;bottom:12px;z-index:150;
+    background:#fff;border-radius:14px;padding:14px 16px;box-shadow:0 8px 26px rgba(0,0,0,0.22);
+    display:none;align-items:center;gap:12px;border:1px solid var(--line);
+  }
+  .install-banner.show{display:flex;}
+  .install-banner img{width:44px;height:44px;border-radius:10px;flex-shrink:0;}
+  .install-banner .txt{flex:1;min-width:0;}
+  .install-banner .txt .t1{font-family:'Fredoka';font-weight:600;font-size:14px;color:var(--ink);}
+  .install-banner .txt .t2{font-size:12px;color:var(--ink-soft);margin-top:1px;}
+  .install-banner .btns{display:flex;flex-direction:column;gap:4px;flex-shrink:0;}
+  .install-banner button{
+    border:none;border-radius:8px;font-family:'Nunito';font-weight:800;cursor:pointer;
+  }
+  .install-banner .install-yes{background:var(--orange);color:#fff;padding:8px 14px;font-size:12.5px;}
+  .install-banner .install-no{background:transparent;color:var(--ink-soft);padding:2px 6px;font-size:11px;}
+
+  /* BOTTOM SHEET MENU (gear icon) */
+  .sheet-overlay{
+    position:fixed;inset:0;background:rgba(0,0,0,0.45);display:none;
+    align-items:flex-end;justify-content:center;z-index:110;
+  }
+  .sheet-overlay.show{display:flex;}
+  .sheet-panel{
+    background:#fff;width:100%;max-width:480px;border-radius:18px 18px 0 0;
+    padding:10px 16px 26px;box-shadow:0 -8px 24px rgba(0,0,0,0.18);
+  }
+  .sheet-handle{width:40px;height:4px;background:var(--line);border-radius:999px;margin:6px auto 14px;}
+  .sheet-item{
+    display:flex;align-items:center;gap:12px;padding:14px 6px;border-bottom:1px solid var(--line);
+    background:none;border:none;width:100%;text-align:left;font-family:'Nunito';
+    font-size:14.5px;font-weight:700;color:var(--ink);cursor:pointer;
+  }
+  .sheet-item:last-of-type{border-bottom:none;}
+  .sheet-item .ic{font-size:19px;width:26px;text-align:center;flex-shrink:0;}
+  .sheet-cancel{
+    margin-top:10px;width:100%;padding:12px;border-radius:10px;border:none;
+    background:var(--bg);color:var(--ink-soft2);font-family:'Nunito';font-weight:800;
+    font-size:14px;cursor:pointer;
+  }
 </style>
 </head>
 <body>
@@ -345,7 +401,7 @@
     <div class="search-wrap">
       <input id="searchInput" type="text" placeholder="Cari produk, misal: stroller, botol susu...">
     </div>
-    <button class="admin-toggle" onclick="openAdmin()">⚙ Admin</button>
+    <button class="admin-toggle" onclick="openGearMenu()" aria-label="Menu">⚙</button>
     <button class="cart-btn" onclick="openCart()">🛒 Keranjang<span class="cart-badge" id="cartBadge" style="display:none;">0</span></button>
   </div>
   <nav class="cat-nav">
@@ -477,6 +533,31 @@
       <span class="amt" id="cartTotalAmt">Rp0</span>
     </div>
     <button class="wa-checkout-btn" id="cartCheckoutBtn" style="margin-top:14px;display:none;" onclick="checkoutWhatsApp()">💬 Pesan via WhatsApp</button>
+  </div>
+</div>
+
+<div class="sheet-overlay" id="gearMenuOverlay" onclick="if(event.target===this) closeOverlay('gearMenuOverlay')">
+  <div class="sheet-panel">
+    <div class="sheet-handle"></div>
+    <button class="sheet-item" onclick="closeOverlay('gearMenuOverlay'); openAdmin();">
+      <span class="ic">⚙</span> Admin
+    </button>
+    <button class="sheet-item" onclick="window.open('https://wa.me/6285799479288','_blank'); closeOverlay('gearMenuOverlay');">
+      <span class="ic">💬</span> Info Layanan (Hubungi CS)
+    </button>
+    <button class="sheet-cancel" onclick="closeOverlay('gearMenuOverlay')">Batal</button>
+  </div>
+</div>
+
+<div class="install-banner" id="installBanner">
+  <img src="icon-192.png" alt="Algotoko">
+  <div class="txt">
+    <div class="t1">Install Algotoko</div>
+    <div class="t2" id="installBannerText">Belanja lebih cepat, langsung dari layar utama HP</div>
+  </div>
+  <div class="btns" id="installBannerBtns">
+    <button class="install-yes" onclick="triggerInstall()">Install</button>
+    <button class="install-no" onclick="dismissInstallBanner()">Nanti saja</button>
   </div>
 </div>
 
@@ -874,6 +955,9 @@ function openAdmin(){
   document.getElementById('loginOverlay').classList.add('show');
   document.getElementById('adminPass').value = "";
   document.getElementById('loginMsg').textContent = "";
+}
+function openGearMenu(){
+  document.getElementById('gearMenuOverlay').classList.add('show');
 }
 function closeOverlay(id){
   document.getElementById(id).classList.remove('show');
@@ -1285,6 +1369,75 @@ if('serviceWorker' in navigator){
     navigator.serviceWorker.register('sw.js').catch(err=>console.log('SW gagal:', err));
   });
 }
+
+/* ================= INSTALL APP BANNER (custom, tidak menunggu banner otomatis Chrome) ================= */
+const INSTALL_DISMISS_KEY = "algotoko-install-dismissed-until";
+let deferredInstallPrompt = null;
+
+function isStandalone(){
+  return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+}
+
+function wasRecentlyDismissed(){
+  try{
+    const until = Number(localStorage.getItem(INSTALL_DISMISS_KEY) || 0);
+    return Date.now() < until;
+  }catch(e){ return false; }
+}
+
+function showInstallBanner(isIOS){
+  if(isStandalone() || wasRecentlyDismissed()) return;
+  const banner = document.getElementById('installBanner');
+  const text = document.getElementById('installBannerText');
+  const btns = document.getElementById('installBannerBtns');
+  if(isIOS){
+    text.textContent = "Tap tombol Bagikan (⬆️) di Safari, lalu pilih \"Tambah ke Layar Utama\"";
+    btns.innerHTML = `<button class="install-no" onclick="dismissInstallBanner()">Mengerti</button>`;
+  }
+  banner.classList.add('show');
+}
+
+function dismissInstallBanner(){
+  document.getElementById('installBanner').classList.remove('show');
+  try{
+    // Jangan tampilkan lagi selama 3 hari setelah ditutup, biar tidak mengganggu.
+    localStorage.setItem(INSTALL_DISMISS_KEY, String(Date.now() + 3*24*60*60*1000));
+  }catch(e){}
+}
+
+async function triggerInstall(){
+  const banner = document.getElementById('installBanner');
+  if(!deferredInstallPrompt){
+    banner.classList.remove('show');
+    return;
+  }
+  deferredInstallPrompt.prompt();
+  try{ await deferredInstallPrompt.userChoice; }catch(e){}
+  deferredInstallPrompt = null;
+  banner.classList.remove('show');
+}
+
+// Chrome/Android: tangkap event resmi lalu tampilkan banner kita sendiri (lebih pasti muncul & terlihat).
+window.addEventListener('beforeinstallprompt', (e)=>{
+  e.preventDefault();
+  deferredInstallPrompt = e;
+  showInstallBanner(false);
+});
+
+window.addEventListener('appinstalled', ()=>{
+  document.getElementById('installBanner').classList.remove('show');
+  deferredInstallPrompt = null;
+});
+
+// iOS Safari tidak mendukung beforeinstallprompt — tampilkan instruksi manual saja.
+(function checkIOS(){
+  const ua = window.navigator.userAgent;
+  const isIOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
+  const isSafari = /^((?!chrome|android|crios|fxios).)*safari/i.test(ua);
+  if(isIOS && isSafari && !isStandalone()){
+    setTimeout(()=> showInstallBanner(true), 2500);
+  }
+})();
 </script>
 </body>
 </html>
