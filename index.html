@@ -14,6 +14,15 @@
 <meta property="og:url" content="https://algotoko.vercel.app/" />
 <meta property="og:type" content="website" />
 <meta name="twitter:card" content="summary_large_image" />
+
+<!-- PWA -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#EE4D2D">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Algotoko">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -235,6 +244,81 @@
   .icon-btn:hover{background:var(--beige);}
   .login-box .field{margin-bottom:16px;}
   .status-msg{font-size:12.5px;margin-top:10px;text-align:center;color:var(--orange-dark);min-height:16px;}
+
+  /* CART BUTTON (header) */
+  .cart-btn{
+    position:relative;border:1.5px solid rgba(255,255,255,0.75);background:transparent;color:#fff;
+    padding:8px 14px;border-radius:4px;font-family:'Nunito';font-weight:700;font-size:13px;
+    cursor:pointer;white-space:nowrap;display:flex;align-items:center;gap:6px;
+  }
+  .cart-btn:hover{background:rgba(255,255,255,0.15);}
+  .cart-badge{
+    position:absolute;top:-7px;right:-7px;background:var(--gold);color:#5a3e00;
+    font-size:10.5px;font-weight:800;min-width:18px;height:18px;border-radius:999px;
+    display:flex;align-items:center;justify-content:center;padding:0 4px;
+  }
+
+  /* PRODUCT ACTIONS ROW (Beli Sekarang + Keranjang) */
+  .card-actions{display:flex;gap:6px;margin-top:6px;}
+  .card-actions .buy-btn{margin-top:0;flex:1;}
+  .cart-add-btn{
+    flex:0 0 auto;border:1.5px solid var(--orange);background:var(--orange-light);color:var(--orange);
+    padding:8px 11px;border-radius:4px;font-family:'Nunito';font-weight:800;font-size:14px;cursor:pointer;
+    transition:background .15s,color .15s;
+  }
+  .cart-add-btn:hover{background:var(--orange);color:#fff;}
+  .card-img{cursor:pointer;}
+
+  /* PRODUCT PREVIEW MODAL */
+  .preview-panel{background:#fff;border-radius:16px;max-width:420px;width:100%;padding:0;overflow:hidden;box-shadow:0 20px 50px rgba(0,0,0,0.2);}
+  .preview-img{width:100%;aspect-ratio:1/1;background:#FAFAFA;display:flex;align-items:center;justify-content:center;font-size:72px;overflow:hidden;position:relative;}
+  .preview-img img{width:100%;height:100%;object-fit:cover;}
+  .preview-close{
+    position:absolute;top:10px;right:10px;border:none;background:rgba(0,0,0,0.45);color:#fff;
+    width:30px;height:30px;border-radius:999px;cursor:pointer;font-size:14px;
+  }
+  .preview-body{padding:18px 20px 22px;}
+  .preview-cat{font-size:11px;font-weight:700;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.04em;}
+  .preview-name{font-size:17px;font-weight:700;font-family:'Fredoka';margin:4px 0 6px;color:var(--ink);}
+  .preview-price{font-size:19px;font-weight:800;color:var(--orange);margin-bottom:14px;}
+  .qty-row{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
+  .qty-row label{font-size:12.5px;font-weight:700;color:var(--ink-soft);}
+  .qty-stepper{display:flex;align-items:center;border:1.5px solid var(--line);border-radius:8px;overflow:hidden;}
+  .qty-stepper button{border:none;background:var(--orange-light);color:var(--orange);width:32px;height:32px;font-size:16px;font-weight:800;cursor:pointer;}
+  .qty-stepper span{width:36px;text-align:center;font-weight:700;font-size:14px;}
+  .preview-body textarea{
+    width:100%;padding:10px 12px;border-radius:10px;border:1.5px solid var(--line);
+    font-family:'Nunito';font-size:13.5px;outline:none;resize:vertical;min-height:64px;margin-bottom:14px;
+  }
+  .preview-body textarea:focus{border-color:var(--orange);}
+
+  /* CART MODAL */
+  .cart-panel{background:#fff;border-radius:16px;max-width:480px;width:100%;padding:22px 20px 24px;box-shadow:0 20px 50px rgba(0,0,0,0.2);}
+  .cart-item{display:flex;gap:10px;padding:12px 0;border-bottom:1px solid var(--line);}
+  .cart-item .thumb{width:52px;height:52px;border-radius:8px;background:#FAFAFA;flex-shrink:0;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:24px;}
+  .cart-item .thumb img{width:100%;height:100%;object-fit:cover;}
+  .cart-item .info{flex:1;min-width:0;}
+  .cart-item .info .name{font-size:13.5px;font-weight:700;color:var(--ink);line-height:1.3;}
+  .cart-item .info .note{font-size:11.5px;color:var(--ink-soft);margin-top:2px;font-style:italic;}
+  .cart-item .info .price{font-size:13px;color:var(--orange);font-weight:800;margin-top:4px;}
+  .cart-item .qty-stepper button{width:26px;height:26px;font-size:14px;}
+  .cart-item .qty-stepper span{width:28px;font-size:13px;}
+  .cart-item .remove-btn{border:none;background:transparent;color:var(--ink-soft);font-size:13px;cursor:pointer;padding:4px;}
+  .cart-item .remove-btn:hover{color:var(--orange-dark);}
+  .cart-empty{text-align:center;color:var(--ink-soft);font-size:14px;padding:36px 0;}
+  .cart-total-row{display:flex;justify-content:space-between;align-items:center;padding:14px 0;font-weight:800;font-size:15px;border-top:2px solid var(--line);margin-top:4px;}
+  .cart-total-row .amt{color:var(--orange);}
+  .wa-checkout-btn{
+    border:none;background:#25D366;color:#fff;padding:12px 20px;border-radius:10px;
+    font-family:'Nunito';font-weight:800;font-size:14.5px;cursor:pointer;width:100%;
+  }
+  .wa-checkout-btn:hover{background:#1EBE59;}
+  .toast{
+    position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;
+    padding:10px 18px;border-radius:999px;font-size:13px;font-family:'Nunito';font-weight:700;
+    z-index:200;opacity:0;pointer-events:none;transition:opacity .25s, transform .25s;box-shadow:0 6px 16px rgba(0,0,0,0.25);
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(-6px);}
 </style>
 </head>
 <body>
@@ -252,6 +336,7 @@
       <input id="searchInput" type="text" placeholder="Cari produk, misal: stroller, botol susu...">
     </div>
     <button class="admin-toggle" onclick="openAdmin()">⚙ Admin</button>
+    <button class="cart-btn" onclick="openCart()">🛒 Keranjang<span class="cart-badge" id="cartBadge" style="display:none;">0</span></button>
   </div>
   <nav class="cat-nav">
     <div class="cat-nav-inner" id="catNav"></div>
@@ -342,6 +427,47 @@
     <div class="admin-list" id="adminList"></div>
   </div>
 </div>
+
+<!-- PRODUCT PREVIEW MODAL -->
+<div class="overlay" id="previewOverlay">
+  <div class="preview-panel">
+    <div class="preview-img" id="previewImg">
+      <button class="preview-close" onclick="closeOverlay('previewOverlay')">✕</button>
+    </div>
+    <div class="preview-body">
+      <div class="preview-cat" id="previewCat"></div>
+      <div class="preview-name" id="previewName"></div>
+      <div class="preview-price" id="previewPrice"></div>
+      <div class="qty-row">
+        <label>Jumlah</label>
+        <div class="qty-stepper">
+          <button onclick="changePreviewQty(-1)">−</button>
+          <span id="previewQty">1</span>
+          <button onclick="changePreviewQty(1)">+</button>
+        </div>
+      </div>
+      <textarea id="previewNote" placeholder="Catatan / keterangan (opsional) — misal ukuran, warna, atau permintaan khusus"></textarea>
+      <button class="primary-btn" onclick="addPreviewToCart()">+ Tambah ke Keranjang</button>
+    </div>
+  </div>
+</div>
+
+<!-- CART MODAL -->
+<div class="overlay" id="cartOverlay">
+  <div class="cart-panel">
+    <button class="close-x" onclick="closeOverlay('cartOverlay')">✕</button>
+    <h2>Keranjang Belanja</h2>
+    <p class="sub">Cek pesanan kamu sebelum checkout via WhatsApp.</p>
+    <div id="cartList"></div>
+    <div class="cart-total-row" id="cartTotalRow" style="display:none;">
+      <span>Total</span>
+      <span class="amt" id="cartTotalAmt">Rp0</span>
+    </div>
+    <button class="wa-checkout-btn" id="cartCheckoutBtn" style="margin-top:14px;display:none;" onclick="checkoutWhatsApp()">💬 Pesan via WhatsApp</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
 
 <script>
 const CATEGORIES = ["Semua","Popok Bayi","Stroller & Car Seat","Perlengkapan Mandi","Pakaian Bayi","Peralatan Makan","Mainan Edukatif","Perlengkapan Tidur"];
@@ -673,12 +799,15 @@ function renderGrid(){
     card.className = 'card';
     const waText = encodeURIComponent(`Halo Algotoko, saya mau pesan produk:\n${p.name}\nHarga: ${formatRupiah(p.price)}`);
     card.innerHTML = `
-      <div class="card-img">${p.image ? `<img src="${p.image}" alt="${p.name}">` : (p.emoji || '🍼')}</div>
+      <div class="card-img" onclick="openPreview('${p.id}')">${p.image ? `<img src="${p.image}" alt="${p.name}">` : (p.emoji || '🍼')}</div>
       <div class="card-body">
         <div class="card-cat">${p.category}</div>
         <div class="card-name">${p.name}</div>
         <div class="card-price">${formatRupiah(p.price)}</div>
-        <button class="buy-btn" onclick="window.open('https://wa.me/${WHATSAPP_NUMBER}?text=${waText}','_blank')">Beli Sekarang</button>
+        <div class="card-actions">
+          <button class="buy-btn" onclick="window.open('https://wa.me/${WHATSAPP_NUMBER}?text=${waText}','_blank')">Beli Sekarang</button>
+          <button class="cart-add-btn" title="Tambah ke keranjang" onclick="addToCart('${p.id}',1,'')">🛒</button>
+        </div>
       </div>
     `;
     grid.appendChild(card);
@@ -701,12 +830,15 @@ function renderPromo(){
     const waText = encodeURIComponent(`Halo Algotoko, saya mau pesan produk:\n${p.name}\nHarga: ${formatRupiah(p.price)}`);
     card.innerHTML = `
       <div class="promo-badge">PROMO</div>
-      <div class="card-img">${p.image ? `<img src="${p.image}" alt="${p.name}">` : (p.emoji || '🍼')}</div>
+      <div class="card-img" onclick="openPreview('${p.id}')">${p.image ? `<img src="${p.image}" alt="${p.name}">` : (p.emoji || '🍼')}</div>
       <div class="card-body">
         <div class="card-cat">${p.category}</div>
         <div class="card-name">${p.name}</div>
         <div class="card-price">${formatRupiah(p.price)}</div>
-        <button class="buy-btn" onclick="window.open('https://wa.me/${WHATSAPP_NUMBER}?text=${waText}','_blank')">Beli Sekarang</button>
+        <div class="card-actions">
+          <button class="buy-btn" onclick="window.open('https://wa.me/${WHATSAPP_NUMBER}?text=${waText}','_blank')">Beli Sekarang</button>
+          <button class="cart-add-btn" title="Tambah ke keranjang" onclick="addToCart('${p.id}',1,'')">🛒</button>
+        </div>
       </div>
     `;
     scroll.appendChild(card);
@@ -733,6 +865,163 @@ function openAdmin(){
 function closeOverlay(id){
   document.getElementById(id).classList.remove('show');
 }
+
+/* ================= CART & PREVIEW ================= */
+const CART_KEY = "algotoko-cart";
+let cart = [];
+let previewProduct = null;
+let previewQty = 1;
+
+function loadCart(){
+  try{
+    const raw = localStorage.getItem(CART_KEY);
+    cart = raw ? JSON.parse(raw) : [];
+  }catch(e){ cart = []; }
+  updateCartBadge();
+}
+
+function saveCart(){
+  try{ localStorage.setItem(CART_KEY, JSON.stringify(cart)); }catch(e){}
+  updateCartBadge();
+}
+
+function updateCartBadge(){
+  const badge = document.getElementById('cartBadge');
+  const count = cart.reduce((sum,i)=> sum + i.qty, 0);
+  if(count > 0){
+    badge.style.display = 'flex';
+    badge.textContent = count > 99 ? '99+' : count;
+  }else{
+    badge.style.display = 'none';
+  }
+}
+
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(()=> t.classList.remove('show'), 1800);
+}
+
+// Tambah produk ke keranjang. Jika produk dengan catatan yang sama sudah ada, tambahkan qty-nya.
+function addToCart(productId, qty, note){
+  const p = products.find(x=>x.id === productId);
+  if(!p) return;
+  note = (note || "").trim();
+  const existing = cart.find(i=> i.id === productId && (i.note || "") === note);
+  if(existing){
+    existing.qty += qty;
+  }else{
+    cart.push({ id: p.id, name: p.name, price: p.price, image: p.image, emoji: p.emoji, qty: qty, note: note });
+  }
+  saveCart();
+  showToast(`${p.name} ditambahkan ke keranjang`);
+}
+
+function removeFromCart(index){
+  cart.splice(index, 1);
+  saveCart();
+  renderCartList();
+}
+
+function changeCartQty(index, delta){
+  cart[index].qty += delta;
+  if(cart[index].qty <= 0){
+    cart.splice(index, 1);
+  }
+  saveCart();
+  renderCartList();
+}
+
+function openCart(){
+  renderCartList();
+  document.getElementById('cartOverlay').classList.add('show');
+}
+
+function renderCartList(){
+  const list = document.getElementById('cartList');
+  const totalRow = document.getElementById('cartTotalRow');
+  const checkoutBtn = document.getElementById('cartCheckoutBtn');
+
+  if(cart.length === 0){
+    list.innerHTML = `<div class="cart-empty">Keranjang kamu masih kosong.</div>`;
+    totalRow.style.display = 'none';
+    checkoutBtn.style.display = 'none';
+    return;
+  }
+
+  let total = 0;
+  list.innerHTML = cart.map((item, idx)=>{
+    total += item.price * item.qty;
+    return `
+      <div class="cart-item">
+        <div class="thumb">${item.image ? `<img src="${item.image}" alt="${item.name}">` : (item.emoji || '🍼')}</div>
+        <div class="info">
+          <div class="name">${item.name}</div>
+          ${item.note ? `<div class="note">📝 ${item.note}</div>` : ""}
+          <div class="price">${formatRupiah(item.price)}</div>
+          <div class="qty-stepper" style="margin-top:6px;">
+            <button onclick="changeCartQty(${idx},-1)">−</button>
+            <span>${item.qty}</span>
+            <button onclick="changeCartQty(${idx},1)">+</button>
+          </div>
+        </div>
+        <button class="remove-btn" onclick="removeFromCart(${idx})">✕</button>
+      </div>
+    `;
+  }).join('');
+
+  totalRow.style.display = 'flex';
+  document.getElementById('cartTotalAmt').textContent = formatRupiah(total);
+  checkoutBtn.style.display = 'block';
+}
+
+function checkoutWhatsApp(){
+  if(cart.length === 0) return;
+  let total = 0;
+  let lines = cart.map(item=>{
+    const sub = item.price * item.qty;
+    total += sub;
+    let line = `- ${item.name} x${item.qty} = ${formatRupiah(sub)}`;
+    if(item.note) line += `\n  Catatan: ${item.note}`;
+    return line;
+  }).join('\n');
+  const text = `Halo Algotoko, saya mau pesan:\n\n${lines}\n\nTotal: ${formatRupiah(total)}`;
+  window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`, '_blank');
+}
+
+// Preview gambar produk (klik gambar di kartu)
+function openPreview(productId){
+  const p = products.find(x=>x.id === productId);
+  if(!p) return;
+  previewProduct = p;
+  previewQty = 1;
+  document.getElementById('previewImg').innerHTML =
+    `<button class="preview-close" onclick="closeOverlay('previewOverlay')">✕</button>` +
+    (p.image ? `<img src="${p.image}" alt="${p.name}">` : `<span>${p.emoji || '🍼'}</span>`);
+  document.getElementById('previewCat').textContent = p.category;
+  document.getElementById('previewName').textContent = p.name;
+  document.getElementById('previewPrice').textContent = formatRupiah(p.price);
+  document.getElementById('previewQty').textContent = previewQty;
+  document.getElementById('previewNote').value = "";
+  document.getElementById('previewOverlay').classList.add('show');
+}
+
+function changePreviewQty(delta){
+  previewQty = Math.max(1, previewQty + delta);
+  document.getElementById('previewQty').textContent = previewQty;
+}
+
+function addPreviewToCart(){
+  if(!previewProduct) return;
+  const note = document.getElementById('previewNote').value;
+  addToCart(previewProduct.id, previewQty, note);
+  closeOverlay('previewOverlay');
+}
+
+loadCart();
+
 function checkLogin(){
   const val = document.getElementById('adminPass').value;
   if(val === ADMIN_PASSWORD){
@@ -966,5 +1255,13 @@ loadProducts();
 loadLogo();
 </script>
 
+<script>
+// Daftarkan service worker untuk mengaktifkan fitur "Install App" di browser
+if('serviceWorker' in navigator){
+  window.addEventListener('load', ()=>{
+    navigator.serviceWorker.register('sw.js').catch(err=>console.log('SW gagal:', err));
+  });
+}
+</script>
 </body>
 </html>
