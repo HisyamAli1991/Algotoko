@@ -234,6 +234,11 @@
   }
   .admin-row .name-in{flex:1;min-width:0;}
   .admin-row .price-in{width:110px;}
+  .admin-row{flex-wrap:wrap;}
+  .admin-row .note-in{
+    flex:1 1 100%;order:5;margin-top:2px;
+    padding:7px 10px;border-radius:8px;border:1.5px solid var(--line);font-family:'Nunito';font-size:12.5px;
+  }
   .icon-btn{
     border:none;background:transparent;cursor:pointer;font-size:15px;padding:6px;border-radius:8px;
   }
@@ -291,6 +296,11 @@
     font-family:'Nunito';font-size:13.5px;outline:none;resize:vertical;min-height:64px;margin-bottom:14px;
   }
   .preview-body textarea:focus{border-color:var(--orange);}
+  .preview-note-display{
+    background:var(--orange-light);border-radius:10px;padding:10px 12px;margin-bottom:14px;
+    font-family:'Nunito';font-size:13px;color:var(--ink);line-height:1.5;
+  }
+  .preview-note-display .lbl{font-size:11px;font-weight:700;color:var(--orange-dark);text-transform:uppercase;letter-spacing:.03em;margin-bottom:3px;}
 
   /* CART MODAL */
   .cart-panel{background:#fff;border-radius:16px;max-width:480px;width:100%;padding:22px 20px 24px;box-shadow:0 20px 50px rgba(0,0,0,0.2);}
@@ -446,7 +456,10 @@
           <button onclick="changePreviewQty(1)">+</button>
         </div>
       </div>
-      <textarea id="previewNote" placeholder="Catatan / keterangan (opsional) — misal ukuran, warna, atau permintaan khusus"></textarea>
+      <div class="preview-note-display" id="previewNoteDisplay" style="display:none;">
+        <div class="lbl">Keterangan</div>
+        <div id="previewNoteText"></div>
+      </div>
       <button class="primary-btn" onclick="addPreviewToCart()">+ Tambah ke Keranjang</button>
     </div>
   </div>
@@ -806,7 +819,7 @@ function renderGrid(){
         <div class="card-price">${formatRupiah(p.price)}</div>
         <div class="card-actions">
           <button class="buy-btn" onclick="window.open('https://wa.me/${WHATSAPP_NUMBER}?text=${waText}','_blank')">Beli Sekarang</button>
-          <button class="cart-add-btn" title="Tambah ke keranjang" onclick="addToCart('${p.id}',1,'')">🛒</button>
+          <button class="cart-add-btn" title="Tambah ke keranjang" onclick="addToCart('${p.id}',1)">🛒</button>
         </div>
       </div>
     `;
@@ -837,7 +850,7 @@ function renderPromo(){
         <div class="card-price">${formatRupiah(p.price)}</div>
         <div class="card-actions">
           <button class="buy-btn" onclick="window.open('https://wa.me/${WHATSAPP_NUMBER}?text=${waText}','_blank')">Beli Sekarang</button>
-          <button class="cart-add-btn" title="Tambah ke keranjang" onclick="addToCart('${p.id}',1,'')">🛒</button>
+          <button class="cart-add-btn" title="Tambah ke keranjang" onclick="addToCart('${p.id}',1)">🛒</button>
         </div>
       </div>
     `;
@@ -904,16 +917,16 @@ function showToast(msg){
   t._timer = setTimeout(()=> t.classList.remove('show'), 1800);
 }
 
-// Tambah produk ke keranjang. Jika produk dengan catatan yang sama sudah ada, tambahkan qty-nya.
+// Tambah produk ke keranjang. "note" (keterangan admin) mengikuti data produk secara otomatis.
 function addToCart(productId, qty, note){
   const p = products.find(x=>x.id === productId);
   if(!p) return;
-  note = (note || "").trim();
-  const existing = cart.find(i=> i.id === productId && (i.note || "") === note);
+  const finalNote = (note !== undefined ? note : (p.note || "")).trim();
+  const existing = cart.find(i=> i.id === productId && (i.note || "") === finalNote);
   if(existing){
     existing.qty += qty;
   }else{
-    cart.push({ id: p.id, name: p.name, price: p.price, image: p.image, emoji: p.emoji, qty: qty, note: note });
+    cart.push({ id: p.id, name: p.name, price: p.price, image: p.image, emoji: p.emoji, qty: qty, note: finalNote });
   }
   saveCart();
   showToast(`${p.name} ditambahkan ke keranjang`);
@@ -1004,7 +1017,15 @@ function openPreview(productId){
   document.getElementById('previewName').textContent = p.name;
   document.getElementById('previewPrice').textContent = formatRupiah(p.price);
   document.getElementById('previewQty').textContent = previewQty;
-  document.getElementById('previewNote').value = "";
+  const noteBox = document.getElementById('previewNoteDisplay');
+  const noteText = document.getElementById('previewNoteText');
+  if(p.note && p.note.trim() !== ""){
+    noteBox.style.display = 'block';
+    noteText.textContent = p.note;
+  }else{
+    noteBox.style.display = 'none';
+    noteText.textContent = "";
+  }
   document.getElementById('previewOverlay').classList.add('show');
 }
 
@@ -1015,8 +1036,7 @@ function changePreviewQty(delta){
 
 function addPreviewToCart(){
   if(!previewProduct) return;
-  const note = document.getElementById('previewNote').value;
-  addToCart(previewProduct.id, previewQty, note);
+  addToCart(previewProduct.id, previewQty);
   closeOverlay('previewOverlay');
 }
 
@@ -1069,9 +1089,11 @@ function renderAdminList(){
       <button class="icon-btn star ${p.featured ? 'active' : ''}" title="${p.featured ? 'Batalkan promo' : 'Jadikan promo (tampil paling depan)'}">${p.featured ? '★' : '☆'}</button>
       <button class="icon-btn save" title="Simpan">💾</button>
       <button class="icon-btn del" title="Hapus">🗑️</button>
+      <input class="note-in" type="text" placeholder="Keterangan produk (tampil di preview, hanya bisa diubah admin)" value="${(p.note || '').replace(/"/g,'&quot;')}" data-id="${p.id}" data-field="note">
     `;
     const nameIn = row.querySelector('[data-field="name"]');
     const priceIn = row.querySelector('[data-field="price"]');
+    const noteIn = row.querySelector('[data-field="note"]');
     const photoInput = row.querySelector('.photo-input');
     row.querySelector('.photo-btn').onclick = ()=> photoInput.click();
     photoInput.onchange = async ()=>{
@@ -1118,7 +1140,8 @@ function renderAdminList(){
       const prod = products.find(x=>x.id === p.id);
       prod.name = nameIn.value.trim() || prod.name;
       prod.price = Number(priceIn.value) || prod.price;
-      if(USE_SHEET){ await sheetPost({action:'update', id: prod.id, fields:{name: prod.name, price: prod.price}}); }
+      prod.note = noteIn.value.trim();
+      if(USE_SHEET){ await sheetPost({action:'update', id: prod.id, fields:{name: prod.name, price: prod.price, note: prod.note}}); }
       await saveProducts();
       renderGrid();
       showAdminMsg("Perubahan disimpan.");
